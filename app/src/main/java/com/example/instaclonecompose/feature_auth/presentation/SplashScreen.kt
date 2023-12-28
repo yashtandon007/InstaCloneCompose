@@ -24,16 +24,16 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun Splash(
+fun SplashScreen(
     navController: NavController, authViewModel: AuthViewModel
 ) {
     val isAuthenticated = authViewModel.isAuthenticated
     val scale = remember {
-        Animatable(0f)
+        Animatable(0.5f)
     }
     LaunchedEffect(key1 = true) {
 
-        scale.animateTo(targetValue = 0.5f, animationSpec = tween(durationMillis = 1500, easing = {
+        scale.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 1500, easing = {
             OvershootInterpolator(2f).getInterpolation(it)
         }))
         delay(3.seconds)
@@ -57,7 +57,7 @@ fun Splash(
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
+            painter = painterResource(id = R.drawable.insta),
             contentDescription = "splash screen logo",
             modifier = Modifier.scale(scale = scale.value)
         )
@@ -67,7 +67,7 @@ fun Splash(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun Preview() {
+fun PreviewSplash() {
     val navController = rememberNavController()
-    Splash(navController = navController, authViewModel = hiltViewModel())
+    SplashScreen(navController = navController, authViewModel = hiltViewModel())
 }
