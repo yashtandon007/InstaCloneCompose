@@ -21,23 +21,23 @@ class AuthViewModel @Inject constructor(
     val signOutState = mutableStateOf<Response<Boolean>>(Response.Success(false))
     val authState = mutableStateOf(false)
 
-    fun signOut(){
+    fun signOut() {
         viewModelScope.launch {
-            useCases.signOut().collect{
+            useCases.signOut().collect {
                 signOutState.value = it
             }
         }
     }
 
     fun signIn(
-        email:String,
-        password:String
-    ){
+        email: String,
+        password: String
+    ) {
         viewModelScope.launch {
             useCases.signIn(
                 email,
                 password
-            ).collect{
+            ).collect {
                 signInState.value = it
             }
         }
@@ -47,21 +47,21 @@ class AuthViewModel @Inject constructor(
         userName: String,
         email: String,
         password: String
-    ){
+    ) {
         viewModelScope.launch {
             useCases.signUp(
                 userName,
                 email,
                 password
-            ).collect{
+            ).collect {
                 signUpState.value = it
             }
         }
     }
 
-    fun auth(){
+    fun auth() {
         viewModelScope.launch {
-            useCases.authState().collect{
+            useCases.authState().collect {
                 authState.value = it
             }
         }

@@ -24,20 +24,27 @@ class AuthRepositoryImpl @Inject constructor(
             trySend(auth.currentUser == null)
         }
         auth.addAuthStateListener(listener)
-         awaitClose {
+        awaitClose {
             auth.removeAuthStateListener(listener)
         }
     }
+
     override fun signIn(email: String, password: String): Flow<Response<Boolean>> = callbackFlow {
         trySend(Response.Loading)
-        auth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
-            if(it.isSuccessful){
-                trySend(Response.Success(true))
-            }else{
-                trySend(Response.Error(it.exception?.localizedMessage?:"Failed to sign in"))
+        if (email.isBlank() || password.isBlank()) {
+            trySend(Response.Error("Email or Password is empty"))
+
+        } else {
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    trySend(Response.Success(true))
+                } else {
+                    trySend(Response.Error(it.exception?.localizedMessage ?: "Failed to sign in"))
+                }
             }
         }
-        awaitClose{}
+
+        awaitClose {}
     }
 
 
@@ -47,7 +54,7 @@ class AuthRepositoryImpl @Inject constructor(
             auth.signOut()
             emit(Response.Success(true))
         } catch (e: Exception) {
-            emit(Response.Error(e.localizedMessage?:"Unexpected Error"))
+            emit(Response.Error(e.localizedMessage ?: "Unexpected Error"))
         }
     }
 
@@ -55,9 +62,9 @@ class AuthRepositoryImpl @Inject constructor(
         userName: String, email: String, password: String
     ): Flow<Response<Boolean>> = callbackFlow {
         trySend(Response.Loading)
-        auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             val userID = auth.currentUser?.uid!!
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 val user = User(
                     userName = userName,
                     useId = userID,
@@ -67,18 +74,26 @@ class AuthRepositoryImpl @Inject constructor(
                 firestore.collection(Constants.COLLECTION_NAME_USERS)
                     .document(userID)
                     .set(user)
-                    .addOnCompleteListener { result->
-                        if(result.isSuccessful){
+                    .addOnCompleteListener { result ->
+                        if (result.isSuccessful) {
                             trySend(Response.Success(true))
-                        }else{
-                            trySend(Response.Error(result.exception?.localizedMessage?:"Failed to create user"))
+                        } else {
+                            trySend(
+                                Response.Error(
+                                    result.exception?.localizedMessage ?: "Failed to create user"
+                                )
+                            )
                         }
                     }
-            }else{
-                trySend(Response.Error(it.exception?.localizedMessage?:"Failed to create account"))
+            } else {
+                trySend(
+                    Response.Error(
+                        it.exception?.localizedMessage ?: "Failed to create account"
+                    )
+                )
             }
         }
-        awaitClose{}
+        awaitClose {}
     }
 
 

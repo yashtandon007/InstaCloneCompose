@@ -25,9 +25,10 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun SplashScreen(
-    navController: NavController, authViewModel: AuthViewModel
+    navController: NavController,
+    authViewModel: AuthViewModel? = null
 ) {
-    val isAuthenticated = authViewModel.isAuthenticated
+    val isAuthenticated = authViewModel?.isAuthenticated?:false
     val scale = remember {
         Animatable(0.5f)
     }
@@ -69,5 +70,5 @@ fun SplashScreen(
 @Composable
 fun PreviewSplash() {
     val navController = rememberNavController()
-    SplashScreen(navController = navController, authViewModel = hiltViewModel())
+    SplashScreen(navController = navController)
 }
