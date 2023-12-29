@@ -47,7 +47,7 @@ fun InstaCloneApp(navController: NavHostController, authViewModel: AuthViewModel
             LoginScreen(navController,authViewModel)
         }
         composable(Screens.SignupScreen.route) {
-            SignUpScreen(navController)
+            SignUpScreen(navController,authViewModel)
         }
         composable(Screens.FeedScreen.route) {
             FeedScreen(navController)

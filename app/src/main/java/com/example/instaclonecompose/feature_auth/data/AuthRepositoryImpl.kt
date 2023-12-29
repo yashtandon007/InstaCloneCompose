@@ -62,35 +62,41 @@ class AuthRepositoryImpl @Inject constructor(
         userName: String, email: String, password: String
     ): Flow<Response<Boolean>> = callbackFlow {
         trySend(Response.Loading)
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-            val userID = auth.currentUser?.uid!!
-            if (it.isSuccessful) {
-                val user = User(
-                    userName = userName,
-                    useId = userID,
-                    password = password,
-                    email = email
-                )
-                firestore.collection(Constants.COLLECTION_NAME_USERS)
-                    .document(userID)
-                    .set(user)
-                    .addOnCompleteListener { result ->
-                        if (result.isSuccessful) {
-                            trySend(Response.Success(true))
-                        } else {
-                            trySend(
-                                Response.Error(
-                                    result.exception?.localizedMessage ?: "Failed to create user"
-                                )
-                            )
-                        }
-                    }
-            } else {
-                trySend(
-                    Response.Error(
-                        it.exception?.localizedMessage ?: "Failed to create account"
+        if (email.isBlank() || password.isBlank()  || userName.isBlank() ) {
+            trySend(Response.Error("Username, Email or Password is empty"))
+
+        } else {
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+                val userID = auth.currentUser?.uid!!
+                if (it.isSuccessful) {
+                    val user = User(
+                        userName = userName,
+                        useId = userID,
+                        password = password,
+                        email = email
                     )
-                )
+                    firestore.collection(Constants.COLLECTION_NAME_USERS)
+                        .document(userID)
+                        .set(user)
+                        .addOnCompleteListener { result ->
+                            if (result.isSuccessful) {
+                                trySend(Response.Success(true))
+                            } else {
+                                trySend(
+                                    Response.Error(
+                                        result.exception?.localizedMessage
+                                            ?: "Failed to create user"
+                                    )
+                                )
+                            }
+                        }
+                } else {
+                    trySend(
+                        Response.Error(
+                            it.exception?.localizedMessage ?: "Failed to create account"
+                        )
+                    )
+                }
             }
         }
         awaitClose {}
