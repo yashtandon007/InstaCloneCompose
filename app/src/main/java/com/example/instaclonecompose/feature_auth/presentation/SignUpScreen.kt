@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,6 +51,23 @@ fun SignUpScreen(
     }
     val passwordState = remember {
         mutableStateOf("")
+    }
+
+    val signUpResponse = authViewModel?.signUpState?.value
+    LaunchedEffect(signUpResponse) {
+        when (signUpResponse) {
+            is Response.Success -> {
+                if(signUpResponse.data){
+                    Log.e("yt007","Success SignUp"+signUpResponse.data)
+                    navController.navigate(Screens.FeedScreen.route){
+                        popUpTo(Screens.SignupScreen.route){
+                            inclusive = true
+                        }
+                    }
+                }
+            }
+            else -> {}
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -112,17 +130,6 @@ fun SignUpScreen(
                         modifier = Modifier.size(30.dp)
                     )
                 }
-                is Response.Success -> {
-                    Log.e("yt007","Success")
-                    if(response.data){
-                        Log.e("yt007","Success"+response.data)
-                        navController.navigate(Screens.FeedScreen.route){
-                            popUpTo(Screens.SignupScreen.route){
-                                inclusive = true
-                            }
-                        }
-                    }
-                }
                 else -> {}
             }
 
@@ -142,7 +149,7 @@ fun SignUpScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewSignOut() {
+private fun Preview(){
     val navController = rememberNavController()
     SignUpScreen(navController = navController)
 }

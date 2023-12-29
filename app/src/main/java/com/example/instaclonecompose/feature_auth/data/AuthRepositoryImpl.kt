@@ -1,5 +1,6 @@
 package com.example.instaclonecompose.feature_auth.data
 
+import android.util.Log
 import com.example.instaclonecompose.feature_auth.domain.model.User
 import com.example.instaclonecompose.feature_auth.domain.repository.AuthRepository
 import com.example.instaclonecompose.util.Constants
@@ -37,6 +38,8 @@ class AuthRepositoryImpl @Inject constructor(
         } else {
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                 if (it.isSuccessful) {
+                    Log.e("yt007","sign in  successs...........")
+
                     trySend(Response.Success(true))
                 } else {
                     trySend(Response.Error(it.exception?.localizedMessage ?: "Failed to sign in"))

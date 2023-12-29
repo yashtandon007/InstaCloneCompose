@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun FeedScreen(
+fun SearchScreen(
     navController: NavController
 ) {
     Column(
@@ -41,7 +41,7 @@ fun FeedScreen(
             Modifier.weight(1f)
         ) {
             Box(modifier = Modifier.fillMaxSize()){
-                Text(text = "Feed Screen", fontSize = 50.sp)
+                Text(text = "Search Screen", fontSize = 50.sp)
             }
 
         }
@@ -52,7 +52,7 @@ fun FeedScreen(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-private fun Preview() {
+fun PreviewSearch() {
     val navController = rememberNavController()
-    FeedScreen(navController = navController)
+    SearchScreen(navController = navController)
 }

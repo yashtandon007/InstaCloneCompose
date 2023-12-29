@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,9 +32,29 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun FeedScreen(
-    navController: NavController
+fun ProfileScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel?=null
 ) {
+
+    LaunchedEffect(key1 = true) {
+        val isAuthenticated = authViewModel?.isAuthenticated?:false
+        delay(3.seconds)
+        if (isAuthenticated) {
+            navController.navigate(Screens.FeedScreen.route) {
+                popUpTo(Screens.SplashScreen.route) {
+                    inclusive = true
+                }
+            }
+        } else {
+            navController.navigate(Screens.LoginScreen.route) {
+                popUpTo(Screens.SplashScreen.route) {
+                    inclusive = true
+                }
+            }
+        }
+    }
+
     Column(
         Modifier.fillMaxSize()
     ) {
@@ -40,19 +62,23 @@ fun FeedScreen(
         Column(
             Modifier.weight(1f)
         ) {
-            Box(modifier = Modifier.fillMaxSize()){
-                Text(text = "Feed Screen", fontSize = 50.sp)
+            Box(modifier = Modifier.fillMaxWidth()){
+                Text(text = "Profile Screen", fontSize = 50.sp)
+            }
+            Button(onClick = {
+                authViewModel?.signOut()
+            }) {
+                Text(text = "Logout")
             }
 
         }
         BottomNav(navController = navController)
     }
-
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-private fun Preview() {
+fun PreviewProfile() {
     val navController = rememberNavController()
-    FeedScreen(navController = navController)
+    ProfileScreen(navController = navController)
 }

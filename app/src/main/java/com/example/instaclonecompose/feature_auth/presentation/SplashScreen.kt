@@ -68,7 +68,7 @@ fun SplashScreen(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewSplash() {
+private fun Preview() {
     val navController = rememberNavController()
     SplashScreen(navController = navController)
 }

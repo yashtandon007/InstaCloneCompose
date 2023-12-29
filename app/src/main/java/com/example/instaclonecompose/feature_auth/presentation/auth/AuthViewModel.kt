@@ -1,5 +1,6 @@
 package com.example.instaclonecompose.feature_auth.presentation.auth
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -33,11 +34,13 @@ class AuthViewModel @Inject constructor(
         email: String,
         password: String
     ) {
+        Log.e("SIGN","email $email and pass $password")
         viewModelScope.launch {
             useCases.signIn(
                 email,
                 password
             ).collect {
+                Log.e("yt007","sign in  collect...........")
                 signInState.value = it
             }
         }

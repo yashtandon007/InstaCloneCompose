@@ -15,6 +15,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.instaclonecompose.feature_auth.presentation.FeedScreen
 import com.example.instaclonecompose.feature_auth.presentation.LoginScreen
+import com.example.instaclonecompose.feature_auth.presentation.ProfileScreen
+import com.example.instaclonecompose.feature_auth.presentation.SearchScreen
 import com.example.instaclonecompose.feature_auth.presentation.SignUpScreen
 import com.example.instaclonecompose.feature_auth.presentation.SplashScreen
 import com.example.instaclonecompose.feature_auth.presentation.auth.AuthViewModel
@@ -51,6 +53,12 @@ fun InstaCloneApp(navController: NavHostController, authViewModel: AuthViewModel
         }
         composable(Screens.FeedScreen.route) {
             FeedScreen(navController)
+        }
+        composable(Screens.SearchScreen.route) {
+            SearchScreen(navController)
+        }
+        composable(Screens.ProfileScreen.route) {
+            ProfileScreen(navController)
         }
     }
 }

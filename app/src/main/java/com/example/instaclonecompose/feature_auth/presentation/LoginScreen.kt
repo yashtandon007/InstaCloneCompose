@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,6 +44,23 @@ fun LoginScreen(
     navController: NavController,
     authViewModel: AuthViewModel? = null
 ) {
+    val signInResponse = authViewModel?.signInState?.value
+    LaunchedEffect(signInResponse) {
+        when (signInResponse) {
+            is Response.Success -> {
+                if(signInResponse.data){
+                    Log.e("yt007","Success login"+signInResponse.data)
+                    navController.navigate(Screens.FeedScreen.route){
+                        popUpTo(Screens.LoginScreen.route){
+                            inclusive = true
+                        }
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -101,27 +119,16 @@ fun LoginScreen(
             }, modifier = Modifier.padding(6.dp)) {
                 Text(text = "Login in" )
             }
-            when(val response = authViewModel?.signInState?.value){
+            when(signInResponse){
                 is Response.Error -> {
-                    Log.e("yt007","response.message"+response.message)
-                    Toast(response.message)
+                    Log.e("yt007","response.message"+signInResponse.message)
+                    Toast(signInResponse.message)
                 }
                 is Response.Loading -> {
                     Log.e("yt007","Loading")
                     CircularProgressIndicator(
                         modifier = Modifier.size(30.dp)
                     )
-                }
-                is Response.Success -> {
-                    Log.e("yt007","Success")
-                    if(response.data){
-                        Log.e("yt007","Success"+response.data)
-                        navController.navigate(Screens.FeedScreen.route){
-                            popUpTo(Screens.LoginScreen.route){
-                                inclusive = true
-                            }
-                        }
-                    }
                 }
                 else -> {}
             }
@@ -142,7 +149,7 @@ fun LoginScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewSignIn() {
+private fun Preview(){
     val navController = rememberNavController()
     LoginScreen(navController = navController)
 }
