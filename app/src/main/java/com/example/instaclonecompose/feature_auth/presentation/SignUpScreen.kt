@@ -53,23 +53,6 @@ fun SignUpScreen(
         mutableStateOf("")
     }
 
-    val signUpResponse = authViewModel?.signUpState?.value
-    LaunchedEffect(signUpResponse) {
-        when (signUpResponse) {
-            is Response.Success -> {
-                if(signUpResponse.data){
-                    Log.e("yt007","Success SignUp"+signUpResponse.data)
-                    navController.navigate(Screens.FeedScreen.route){
-                        popUpTo(Screens.SignupScreen.route){
-                            inclusive = true
-                        }
-                    }
-                }
-            }
-            else -> {}
-        }
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -113,31 +96,47 @@ fun SignUpScreen(
             })
             Button(onClick = {
                 authViewModel?.signUp(
-                    userNameState.value,emailState.value, passwordState.value
+                    userNameState.value, emailState.value, passwordState.value
                 )
             }, modifier = Modifier.padding(6.dp)) {
                 Text(text = "Sign up")
             }
 
-            when(val response = authViewModel?.signUpState?.value){
+            when (val response = authViewModel?.signUpState?.value) {
                 is Response.Error -> {
-                    Log.e("yt007","response.message"+response.message)
+                    Log.e("yt007", "response.message" + response.message)
                     Toast(response.message)
                 }
+
                 is Response.Loading -> {
-                    Log.e("yt007","Loading")
+                    Log.e("yt007", "Loading")
                     CircularProgressIndicator(
                         modifier = Modifier.size(30.dp)
                     )
                 }
+
+                is Response.Success -> {
+                    if (response.data) {
+                        LaunchedEffect(key1 = false) {
+                            Log.e("yt007", "Success SignUp" + response.data)
+                            navController.navigate(Screens.FeedScreen.route) {
+                                popUpTo(Screens.SignupScreen.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                }
+
                 else -> {}
             }
 
             Text(
                 "Already a User? Sign In",
-                modifier = Modifier.padding(6.dp)
+                modifier = Modifier
+                    .padding(6.dp)
                     .clickable {
-                        navController.navigate(Screens.LoginScreen.route){
+                        navController.navigate(Screens.LoginScreen.route) {
                             launchSingleTop = true
                         }
                     }
@@ -149,7 +148,7 @@ fun SignUpScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun Preview(){
+private fun Preview() {
     val navController = rememberNavController()
     SignUpScreen(navController = navController)
 }

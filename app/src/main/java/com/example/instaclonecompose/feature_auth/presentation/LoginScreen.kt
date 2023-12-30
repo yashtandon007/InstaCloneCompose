@@ -41,38 +41,19 @@ import com.example.instaclonecompose.util.Screens
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    navController: NavController,
-    authViewModel: AuthViewModel? = null
+    navController: NavController, authViewModel: AuthViewModel? = null
 ) {
-    val signInResponse = authViewModel?.signInState?.value
-    LaunchedEffect(signInResponse) {
-        when (signInResponse) {
-            is Response.Success -> {
-                if(signInResponse.data){
-                    Log.e("yt007","Success login"+signInResponse.data)
-                    navController.navigate(Screens.FeedScreen.route){
-                        popUpTo(Screens.LoginScreen.route){
-                            inclusive = true
-                        }
-                    }
-                }
-            }
-            else -> {}
-        }
-    }
-
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .verticalScroll(rememberScrollState()
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(
+                    rememberScrollState()
+                ), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val emailState = remember {
                 mutableStateOf("")
@@ -97,51 +78,57 @@ fun LoginScreen(
 
             OutlinedTextField(value = emailState.value, onValueChange = {
                 emailState.value = it
-            },
-                modifier = Modifier
-                    .padding(8.dp),
-                label = {
-                    Text(text = "Username or email")
-                })
+            }, modifier = Modifier.padding(8.dp), label = {
+                Text(text = "Username or email")
+            })
             OutlinedTextField(value = passwordState.value, onValueChange = {
                 passwordState.value = it
-            },
-                modifier = Modifier
-                    .padding(8.dp),
-                label = {
-                    Text(text = "Password")
-                })
+            }, modifier = Modifier.padding(8.dp), label = {
+                Text(text = "Password")
+            })
             Button(onClick = {
                 authViewModel?.signIn(
-                    emailState.value,
-                    passwordState.value
+                    emailState.value, passwordState.value
                 )
             }, modifier = Modifier.padding(6.dp)) {
-                Text(text = "Login in" )
+                Text(text = "Login in")
             }
-            when(signInResponse){
+            when (val signInResponse = authViewModel?.signInState?.value) {
                 is Response.Error -> {
-                    Log.e("yt007","response.message"+signInResponse.message)
+                    Log.e("yt007", "response.message" + signInResponse.message)
                     Toast(signInResponse.message)
                 }
+
                 is Response.Loading -> {
-                    Log.e("yt007","Loading")
+                    Log.e("yt007", "Loading")
                     CircularProgressIndicator(
                         modifier = Modifier.size(30.dp)
                     )
                 }
+
+                is Response.Success -> {
+                     if (signInResponse.data) {
+                        LaunchedEffect(key1 = false) {
+                            Log.e("yt007","Success login"+signInResponse.data)
+                            navController.navigate(Screens.FeedScreen.route) {
+                                popUpTo(Screens.LoginScreen.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                }
+
                 else -> {}
             }
 
-            Text(
-                "Create new account",
-                modifier = Modifier.padding(6.dp)
-                    .clickable {
-                        navController.navigate(Screens.SignupScreen.route){
-                            launchSingleTop = true
-                        }
+            Text("Create new account", modifier = Modifier
+                .padding(6.dp)
+                .clickable {
+                    navController.navigate(Screens.SignupScreen.route) {
+                        launchSingleTop = true
                     }
-            )
+                })
 
         }
     }
@@ -149,7 +136,7 @@ fun LoginScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun Preview(){
+private fun Preview() {
     val navController = rememberNavController()
     LoginScreen(navController = navController)
 }
