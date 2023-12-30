@@ -1,13 +1,18 @@
 package com.example.instaclonecompose.di
 
 import com.example.instaclonecompose.feature_auth.data.AuthRepositoryImpl
+import com.example.instaclonecompose.feature_auth.data.UserRepositoryImpl
 import com.example.instaclonecompose.feature_auth.domain.repository.AuthRepository
-import com.example.instaclonecompose.feature_auth.domain.use_cases.AuthState
-import com.example.instaclonecompose.feature_auth.domain.use_cases.AuthUseCases
-import com.example.instaclonecompose.feature_auth.domain.use_cases.IsUserAuthenticated
-import com.example.instaclonecompose.feature_auth.domain.use_cases.SignIn
-import com.example.instaclonecompose.feature_auth.domain.use_cases.SignOut
-import com.example.instaclonecompose.feature_auth.domain.use_cases.SignUp
+import com.example.instaclonecompose.feature_auth.domain.repository.UserRepository
+import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.AuthState
+import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.AuthUseCases
+import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.IsUserAuthenticated
+import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.SignIn
+import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.SignOut
+import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.SignUp
+import com.example.instaclonecompose.feature_auth.domain.use_cases.user.GetUserDetails
+import com.example.instaclonecompose.feature_auth.domain.use_cases.user.SetUserDetails
+import com.example.instaclonecompose.feature_auth.domain.use_cases.user.UserUseCases
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -42,6 +47,15 @@ object AppModule {
             auth, firestore
         )
     }
+    @Singleton
+    @Provides
+    fun providesUserRepository(
+         firestore: FirebaseFirestore
+    ): UserRepository {
+        return UserRepositoryImpl(
+             firestore
+        )
+    }
 
     @Singleton
     @Provides
@@ -60,4 +74,19 @@ object AppModule {
             authRepository
         )
     )
+
+    @Singleton
+    @Provides
+    fun providesUserUseCase(
+        userRepository: UserRepository
+    ) = UserUseCases(
+        getUserDetails = GetUserDetails(
+            userRepository
+        ),
+        setUserDetails = SetUserDetails(
+            userRepository
+        )
+    )
+
+
 }

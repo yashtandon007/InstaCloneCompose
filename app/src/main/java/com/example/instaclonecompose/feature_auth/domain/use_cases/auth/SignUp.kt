@@ -1,4 +1,4 @@
-package com.example.instaclonecompose.feature_auth.domain.use_cases
+package com.example.instaclonecompose.feature_auth.domain.use_cases.auth
 
 import com.example.instaclonecompose.feature_auth.domain.repository.AuthRepository
 import javax.inject.Inject
