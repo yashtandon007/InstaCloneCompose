@@ -1,5 +1,6 @@
 package com.example.instaclonecompose.feature_auth.data
 
+import android.util.Log
 import com.example.instaclonecompose.feature_auth.domain.model.User
 import com.example.instaclonecompose.feature_auth.domain.repository.UserRepository
 import com.example.instaclonecompose.util.Constants
@@ -15,18 +16,19 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
     override fun getUserDetails(userId: String): Flow<Response<User>> = callbackFlow {
         trySend(Response.Loading)
-        val listener = firestore.collection(
+        firestore.collection(
             Constants.COLLECTION_NAME_USERS
         ).document(userId).addSnapshotListener { snapshot, error ->
             if (snapshot != null) {
+                Log.e("yt007", "repo  getUserDetails: success", )
                 val obj = snapshot.toObject(User::class.java)!!
                 trySend(Response.Success(obj))
             } else {
+                Log.e("yt007", "repo getUserDetails: faled", )
                 trySend(Response.Error(error?.message ?: error.toString()))
             }
         }
         awaitClose {
-            listener.remove()
         }
     }
 
@@ -38,6 +40,7 @@ class UserRepositoryImpl @Inject constructor(
         map["name"] = name
         map["bio"] = bio
         map["name"] = name
+        map["url"] = url
         map["userName"] = userName
         firestore.collection(Constants.COLLECTION_NAME_USERS).document(userId)
             .update(map as Map<String, Any>)

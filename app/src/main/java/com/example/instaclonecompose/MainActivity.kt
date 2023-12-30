@@ -3,11 +3,7 @@ package com.example.instaclonecompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,7 +16,7 @@ import com.example.instaclonecompose.feature_auth.presentation.SearchScreen
 import com.example.instaclonecompose.feature_auth.presentation.SignUpScreen
 import com.example.instaclonecompose.feature_auth.presentation.SplashScreen
 import com.example.instaclonecompose.feature_auth.presentation.auth.AuthViewModel
-import com.example.instaclonecompose.ui.theme.InstaCloneComposeTheme
+import com.example.instaclonecompose.feature_auth.presentation.user.UserViewModel
 import com.example.instaclonecompose.util.Screens
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,14 +28,19 @@ class MainActivity : ComponentActivity() {
 
             val navHostController = rememberNavController()
             val authViewModel: AuthViewModel = hiltViewModel()
-            InstaCloneApp(navController = navHostController, authViewModel)
+           val userViewModel: UserViewModel = hiltViewModel()
+            InstaCloneApp(navController = navHostController, authViewModel, userViewModel = userViewModel)
         }
     }
 }
 
 
 @Composable
-fun InstaCloneApp(navController: NavHostController, authViewModel: AuthViewModel) {
+fun InstaCloneApp(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel
+) {
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
 
         composable(Screens.SplashScreen.route) {
@@ -58,7 +59,7 @@ fun InstaCloneApp(navController: NavHostController, authViewModel: AuthViewModel
             SearchScreen(navController)
         }
         composable(Screens.ProfileScreen.route) {
-            ProfileScreen(navController)
+            ProfileScreen(navController,userViewModel)
         }
     }
 }
