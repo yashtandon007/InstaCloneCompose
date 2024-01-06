@@ -13,12 +13,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
+
 class PostRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : PostRepository {
     override fun getPosts(userId: String): Flow<Response<List<Post>>> = callbackFlow {
         trySend(Response.Loading)
-        firestore.collection(Constants.COLLECTION_NAME_POSTS).whereNotEqualTo("userId", userId)
+        firestore.collection(Constants.COLLECTION_NAME_POSTS)
+            //.whereNotEqualTo("userId", userId)
             .addSnapshotListener { snapshot, error ->
                 if (snapshot != null) {
                     Log.e("yt007", "repo  getUserDetails: success")
@@ -33,8 +35,9 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override fun uploadPost(
-        userId: String, postId: String, postImage: String, postDescription: String, time: String
+        userId: String, postImage: String, postDescription: String, time: String
     ): Flow<Response<Boolean>> = callbackFlow {
+        Log.e("yt007", "uploadPost:>>> 111", )
         trySend(Response.Loading)
         val postId = firestore.collection(Constants.COLLECTION_NAME_POSTS).document().id
         val post = Post(
@@ -46,6 +49,7 @@ class PostRepositoryImpl @Inject constructor(
         )
         firestore.collection(Constants.COLLECTION_NAME_POSTS).document(postId).set(post)
             .addOnCompleteListener {
+                Log.e("yt007", "uploadPost:>>> $it", )
                 if (it.isSuccessful) {
                     trySend(Response.Success(true))
                 } else {

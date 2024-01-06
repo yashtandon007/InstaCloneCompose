@@ -11,7 +11,6 @@ interface PostRepository {
     fun getPosts(userId:String) : Flow<Response<List<Post>>>
     fun uploadPost(
         userId:String,
-        postId:String,
         postImage:String,
         postDescription:String,
         time:String

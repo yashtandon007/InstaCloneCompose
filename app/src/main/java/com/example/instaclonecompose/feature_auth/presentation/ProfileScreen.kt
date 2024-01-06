@@ -1,6 +1,7 @@
 package com.example.instaclonecompose.feature_auth.presentation
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,18 +43,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.instaclonecompose.R
+import com.example.instaclonecompose.feature_auth.domain.model.Post
 import com.example.instaclonecompose.feature_auth.domain.model.User
 import com.example.instaclonecompose.feature_auth.presentation.components.PostSection
 import com.example.instaclonecompose.feature_auth.presentation.components.RoundedImage
 import com.example.instaclonecompose.feature_auth.presentation.nav.BottomNav
+import com.example.instaclonecompose.feature_auth.presentation.post.PostViewModel
 import com.example.instaclonecompose.feature_auth.presentation.user.UserViewModel
 import com.example.instaclonecompose.util.Response
 
 
 @Composable
 fun ProfileScreen(
-    navController: NavController, userViewModel: UserViewModel? = null
+    navController: NavController, userViewModel: UserViewModel? = null,
+    postViewModel: PostViewModel? = null
 ) {
 
     when (val response = userViewModel?.getUserData?.value) {
@@ -68,12 +76,15 @@ fun ProfileScreen(
             Log.e("yt007", "ProfileScreen:Success ")
             val data = response.data
             data?.let {
-                Success(it)
+                Success(it,postViewModel)
             }
         }
 
         else -> {}
     }
+
+
+
 
     LaunchedEffect(key1 = true) {
         userViewModel?.getUserData()
@@ -107,7 +118,8 @@ private fun Success(
         name = "Yash Tandon",
         bio = "dfdsfsf asdasd dfdsfsf asdasd dfdsfsf asdasd dfdsfsf asdasd dfdsfsf asdasd dfdsfsf asdasd dfdsfsf asdasd",
         url = "ahsjahsjah"
-    )
+    ),
+    postViewModel: PostViewModel? =null
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -148,7 +160,7 @@ private fun Success(
                 }
 
                 MyProfile(
-                    displayName = user.name, bio = user.bio, url = user.url
+                    displayName = user.name, bio = user.bio, url = user.url,postViewModel
                 )
             }
 
@@ -187,7 +199,9 @@ fun Header(name: String) {
 
 @Composable
 fun MyProfile(
-    displayName: String, bio: String, url: String
+    displayName: String, bio: String, url: String,
+    postViewModel: PostViewModel? =null
+
 ) {
 
     val selectedIndex = remember {
@@ -229,7 +243,7 @@ fun MyProfile(
 
         when(selectedIndex.value){
             0->{
-                PostSection()
+                PostSection(postViewModel = postViewModel)
             }
             1->{
 
@@ -294,4 +308,27 @@ fun ProfileStat(count: Int, text: String, modifier: Modifier = Modifier) {
 fun PreviewProfile() {
     val navController = rememberNavController()
     ProfileScreen(navController = navController)
+}
+
+
+@Composable
+private fun FeedHome(data: List<Post>) {
+    Log.e("yt007", "FeedHome: ${data.size}" )
+    LazyColumn {
+        items(data) {
+            Column {
+                Log.e("yt007", "url: ${it.postImage}" )
+                Image(
+                    painter = rememberImagePainter(it.postImage), contentDescription = null,
+                    modifier = Modifier
+                        .background(Color.Black)
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .padding(bottom = 16.dp)
+                    ,
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        }
+    }
 }

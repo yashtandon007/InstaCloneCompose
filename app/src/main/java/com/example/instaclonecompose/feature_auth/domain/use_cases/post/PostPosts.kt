@@ -9,13 +9,11 @@ class PostPosts @Inject constructor(
 ) {
     operator fun invoke(
         userId:String,
-        postId:String,
         postImage:String,
         postDescription:String,
         time:String
     ) = repository.uploadPost(
         userId,
-        postId,
         postImage,
         postDescription,
         time

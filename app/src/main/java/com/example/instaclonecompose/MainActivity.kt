@@ -16,6 +16,7 @@ import com.example.instaclonecompose.feature_auth.presentation.SearchScreen
 import com.example.instaclonecompose.feature_auth.presentation.SignUpScreen
 import com.example.instaclonecompose.feature_auth.presentation.SplashScreen
 import com.example.instaclonecompose.feature_auth.presentation.auth.AuthViewModel
+import com.example.instaclonecompose.feature_auth.presentation.post.PostViewModel
 import com.example.instaclonecompose.feature_auth.presentation.user.UserViewModel
 import com.example.instaclonecompose.util.Screens
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +30,8 @@ class MainActivity : ComponentActivity() {
             val navHostController = rememberNavController()
             val authViewModel: AuthViewModel = hiltViewModel()
            val userViewModel: UserViewModel = hiltViewModel()
-            InstaCloneApp(navController = navHostController, authViewModel, userViewModel = userViewModel)
+           val postViewModel: PostViewModel = hiltViewModel()
+            InstaCloneApp(navController = navHostController, authViewModel, userViewModel = userViewModel,postViewModel)
         }
     }
 }
@@ -39,7 +41,8 @@ class MainActivity : ComponentActivity() {
 fun InstaCloneApp(
     navController: NavHostController,
     authViewModel: AuthViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    postViewModel: PostViewModel
 ) {
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
 
@@ -53,13 +56,13 @@ fun InstaCloneApp(
             SignUpScreen(navController,authViewModel)
         }
         composable(Screens.FeedScreen.route) {
-            FeedScreen(navController)
+            FeedScreen(navController,postViewModel)
         }
         composable(Screens.SearchScreen.route) {
             SearchScreen(navController)
         }
         composable(Screens.ProfileScreen.route) {
-            ProfileScreen(navController,userViewModel)
+            ProfileScreen(navController,userViewModel,postViewModel)
         }
     }
 }
