@@ -1,8 +1,10 @@
 package com.example.instaclonecompose.di
 
 import com.example.instaclonecompose.feature_auth.data.AuthRepositoryImpl
+import com.example.instaclonecompose.feature_auth.data.PostRepositoryImpl
 import com.example.instaclonecompose.feature_auth.data.UserRepositoryImpl
 import com.example.instaclonecompose.feature_auth.domain.repository.AuthRepository
+import com.example.instaclonecompose.feature_auth.domain.repository.PostRepository
 import com.example.instaclonecompose.feature_auth.domain.repository.UserRepository
 import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.AuthState
 import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.AuthUseCases
@@ -10,6 +12,9 @@ import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.IsUserAu
 import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.SignIn
 import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.SignOut
 import com.example.instaclonecompose.feature_auth.domain.use_cases.auth.SignUp
+import com.example.instaclonecompose.feature_auth.domain.use_cases.post.GetPosts
+import com.example.instaclonecompose.feature_auth.domain.use_cases.post.PostPosts
+import com.example.instaclonecompose.feature_auth.domain.use_cases.post.PostUseCases
 import com.example.instaclonecompose.feature_auth.domain.use_cases.user.GetUserDetails
 import com.example.instaclonecompose.feature_auth.domain.use_cases.user.SetUserDetails
 import com.example.instaclonecompose.feature_auth.domain.use_cases.user.UserUseCases
@@ -47,13 +52,24 @@ object AppModule {
             auth, firestore
         )
     }
+
     @Singleton
     @Provides
     fun providesUserRepository(
-         firestore: FirebaseFirestore
+        firestore: FirebaseFirestore
     ): UserRepository {
         return UserRepositoryImpl(
-             firestore
+            firestore
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun providesPostRepository(
+        firestore: FirebaseFirestore
+    ): PostRepository {
+        return PostRepositoryImpl(
+            firestore
         )
     }
 
@@ -72,6 +88,19 @@ object AppModule {
             authRepository
         ), signUp = SignUp(
             authRepository
+        )
+    )
+
+    @Singleton
+    @Provides
+    fun providesPostUseCase(
+        postRepository: PostRepository
+    ) = PostUseCases(
+        getPosts = GetPosts(
+            postRepository
+        ),
+        postPosts = PostPosts(
+            postRepository
         )
     )
 
